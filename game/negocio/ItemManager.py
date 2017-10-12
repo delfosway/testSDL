@@ -53,4 +53,4 @@ class ItemManager:
     def list_all_items(self):
         for i in range(0, modelo.Equipment.EQUIPMENT_TYPE_COUNT):
             for n in range(0, modelo.Item.MAX_ITEM_LVL + 1):
-                print self.get_item(i, n).to_string()
+                print (self.get_item(i, n).to_string())

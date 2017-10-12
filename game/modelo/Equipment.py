@@ -25,6 +25,20 @@ class Equipment:
     def equip(self,item):
         self.items[item.item_type] = item
 
+    def total_ac(self):
+        total_ac = 0
+        for item in self.items:
+            if item is not None:
+                total_ac += item.ac
+        return total_ac
+
+    def total_dmg(self):
+        total_dmg = 0
+        for item in self.items:
+            if item is not None:
+                total_dmg += item.dmg
+        return total_dmg
+
     def set_armor(self, item):
         self.items[ARMOR] = item
 
