@@ -4,4 +4,4 @@ Este será el repositorio en el cual se guardará el proyecto de software para l
 
 Para ver el progreso del Proyecto, pueden acceder al siguiente Link (https://trello.com/delfoswaysoftware) para ver las tablas Kanban en las cuales plasmamos la planificacion del mismo.
 
-
+Tilemap gratuito obtenido de : https://opengameart.org/content/dungeon-tiles-1
