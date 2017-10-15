@@ -9,22 +9,33 @@ __email__ = "gonza_257@gmail.com"
 __status__ = "Prototype"
 
 import modelo.Equipment
+import pygame
 
 class Character:
 
     BASE_AC_LVL_MULTIPLIER = 1
     BASE_DMG_LVL_MULTIPLIER = 2
 
+    CHARACTER_SPRITE_WIDTH = 32
+    CHARACTER_SPRITE_HEIGHT = 32
+
     def __init__(self, x, y, sprite, lvl, max_hp, max_mp, equipment = None):
-        self.x = x #map address
+        self.x = x
         self.y = y
         self.max_hp = max_hp
         self.max_mp = max_mp
         self.sprite = sprite
         self.is_dead = False
         self.lvl = lvl
+        self.current_map = None
         if equipment == None:
             self.equipment = modelo.Equipment.Equipment(None)
+
+    def spawn(self, map, x, y):
+        self.current_map = map
+        self.x = x
+        self.y = y
+
 
     def base_ac(self):
         return self.lvl * self.BASE_AC_LVL_MULTIPLIER
@@ -66,12 +77,28 @@ class Character:
         if self.mp <= 0:
             self.mp = 0
 
-    def draw(self, screen):
-        screen.blit(self.sprite, (self.x, self.y))
+    def draw(self, camera):
+        camera.draw_drawable(self)
 
     def move(self, x, y):
-        self.x += x
-        self.y += y
+        if (x != 0 or y != 0):
+            old_x = self.x
+            old_y = self.y
+            self.x += x
+            self.y += y
+            if self.is_colliding():
+                print ("Colliding!")
+                self.x = old_x
+                self.y = old_y
+
+
+    def is_colliding(self):
+        walls = self.current_map.walls
+        rect = pygame.Rect(self.x, self.y, self.CHARACTER_SPRITE_WIDTH, self.CHARACTER_SPRITE_HEIGHT)
+        for wall in walls:
+            if rect.colliderect(wall):
+                return True
+        return False
 
     def move_ai(self, px, py, ex, ey): #px py = player coordinates, ex ey = enemy coordinates
         self.px = px

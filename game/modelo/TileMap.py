@@ -31,11 +31,13 @@ class TileMap:
 
     def __init__(self):
         self.tiles = [[None for x in range(self.MAP_WIDTH)] for y in range(self.MAP_HEIGHT)]
+        self.walls = []
         self.load_default_tiles()
 
     def load_from_grid(self, grid):
 
         if self.is_grid_size_valid(grid):
+            self.walls = []
             for x in range(self.MAP_WIDTH):
                 for y in range (self.MAP_HEIGHT):
                     tile_to_set = self.tile_from_grid_value(grid[x][y])
@@ -66,6 +68,9 @@ class TileMap:
             tile.x = x
             tile.y = y
             self.tiles[x][y] = tile
+            if not tile.is_walkable():
+                print("TILEMAP : Tile Added to Wall List : [" + str(x) + "," + str(y) + "]")
+                self.walls.append(pygame.Rect(x * self.TILE_WIDTH + self.TILE_WIDTH / 10, y * self.TILE_HEIGHT + self.TILE_HEIGHT / 10, self.TILE_WIDTH / 2, self.TILE_HEIGHT / 2))
 
     def is_grid_size_valid(self, grid):
         if len(grid) > self.MAP_WIDTH:

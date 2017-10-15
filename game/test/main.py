@@ -38,11 +38,13 @@ def main():
             if (x % 3 == 0 and y % 3 == 0):
                 test_grid[x][y] = 1
 
-
     tileMap = modelo.TileMap.TileMap()
     tileMap.load_from_grid(test_grid)
 
-    player = modelo.Character.Character(1, 1, PLAYER_SPRITE, 1, 100, 100)
+
+    player = modelo.Character.Character(15, 15, PLAYER_SPRITE, 1, 300, 300)
+    player.spawn(tileMap, 330, 330)
+
     run_speed_multiplier = 1.25
     speed = 1
 
@@ -78,6 +80,8 @@ def main():
         if pressed[K_d] and pressed[K_LSHIFT]:
             movement_x += speed * run_speed_multiplier
 
+
+        #print ("Player pos : " + str(player.x) + "," + str(player.y) )
         #modelo.Character.Character.move(player, movement_x, movement_y)
         player.move(movement_x, movement_y)
 

@@ -19,7 +19,8 @@ class Tile:
     def set_event(self,event):
         self.event = event
 
-
+    def is_walkable(self):
+        return self.walkable
 
 
 class TileEvent:
