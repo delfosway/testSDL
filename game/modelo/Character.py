@@ -11,13 +11,14 @@ __status__ = "Prototype"
 import modelo.Equipment
 import pygame
 
+
 class Character:
 
     BASE_AC_LVL_MULTIPLIER = 1
     BASE_DMG_LVL_MULTIPLIER = 2
 
-    CHARACTER_SPRITE_WIDTH = 32
-    CHARACTER_SPRITE_HEIGHT = 32
+    CHARACTER_SPRITE_WIDTH = 64
+    CHARACTER_SPRITE_HEIGHT = 64
 
     def __init__(self, x, y, sprite, lvl, max_hp, max_mp, equipment = None):
         self.x = x
@@ -31,10 +32,10 @@ class Character:
         if equipment == None:
             self.equipment = modelo.Equipment.Equipment(None)
 
-    def spawn(self, map, x, y):
+    def spawn(self, map, map_x, map_y):
         self.current_map = map
-        self.x = x
-        self.y = y
+        self.x = map_x * map.TILE_WIDTH
+        self.y = map_y * map.TILE_HEIGHT
 
 
     def base_ac(self):
@@ -87,14 +88,14 @@ class Character:
             self.x += x
             self.y += y
             if self.is_colliding():
-                print ("Colliding!")
+                #print ("Colliding!")
                 self.x = old_x
                 self.y = old_y
 
 
     def is_colliding(self):
         walls = self.current_map.walls
-        rect = pygame.Rect(self.x, self.y, self.CHARACTER_SPRITE_WIDTH, self.CHARACTER_SPRITE_HEIGHT)
+        rect = pygame.Rect(self.x + 4, self.y + 4, self.CHARACTER_SPRITE_WIDTH - 8, self.CHARACTER_SPRITE_HEIGHT - 8)
         for wall in walls:
             if rect.colliderect(wall):
                 return True
