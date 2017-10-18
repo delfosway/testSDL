@@ -9,6 +9,7 @@ import modelo.TileMap
 import negocio.Camera
 import util.DungeonGenerator
 
+
 game_manager = None
 item_manager = None
 
@@ -48,6 +49,7 @@ def main():
 
 
     player = modelo.Character.Character(32, 32, PLAYER_SPRITE, 1, 300, 300)
+    
     tileMap.spawn_character_at_random_walkable(player)
     #player.spawn(tileMap, 330, 330)
 
@@ -90,11 +92,13 @@ def main():
         #player.move(movement_x, movement_y)
         player.move(movement_x, 0)
         player.move(0, movement_y)
+        camera.draw_fog(player.x,player.y)
 
         camera.update()
         camera.fill_background()
         tileMap.draw(camera)
         camera.draw_drawable(player)
+
         #tileMap.draw(camera)
         #player.draw(camera)
 
