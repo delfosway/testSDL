@@ -8,10 +8,16 @@ import negocio.GameManager
 import modelo.TileMap
 import negocio.Camera
 import util.DungeonGenerator
-
+import util.Graphics
+import util.Util
+import util.Vector
 
 game_manager = None
 item_manager = None
+
+FPS = 60
+
+clock = pygame.time.Clock()
 
 def game_init():
     global game_manager
@@ -35,11 +41,9 @@ def main():
 
     PLAYER_SPRITE = pygame.image.load("Graficos/Bicho.png").convert_alpha()
 
-    #equip = modelo.Equipment.Equipment(None)
-    #equip.equip(item_manager.get_item(modelo.Equipment.ARMOR, 1))
-    #equip.equip(item_manager.get_item(modelo.Equipment.HELMET, 1))
-    #equip.equip(item_manager.get_item(modelo.Equipment.WEAPON, 1))
-    ##print (equip.to_string())
+    characters = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
+
     game_manager.item_manager.list_all_items()
 
     #test_grid = create_test_grid()
@@ -48,7 +52,7 @@ def main():
     tileMap.load_from_grid(test_grid)
 
 
-    player = modelo.Character.Character(32, 32, PLAYER_SPRITE, 1, 300, 300)
+    player = modelo.Character.Character(PLAYER_SPRITE, 1, 300, 300)
     
     tileMap.spawn_character_at_random_walkable(player)
     #player.spawn(tileMap, 330, 330)
@@ -57,18 +61,27 @@ def main():
     speed = 3
 
     camera.attach_to_drawable(player)
+    running = True
+    while running:
+        clock.tick(FPS)
 
-    while True:
+
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    x, y = camera.get_mouse_map_position()
+                    #print("Mouse Position : " + util.Util.position_to_string(x, y))
+                    mouse_vector = util.Vector.Vector(x - player.rect.x, y - player.rect.y)
+                    mouse_vector.normalizar()
+                    #print("Mouse Vector : " + util.Util.position_to_string(x,y) + " - Angle : " + util.Util.position_to_string(mouse_vector.x, mouse_vector.y))
+                    player.shoot(mouse_vector.x * 10, mouse_vector.y * 10)
 
         movement_x = 0
         movement_y = 0
-
-
-
 
         #Calculo desplazamiento a partir de las teclas presionadas.
         pressed = pygame.key.get_pressed()
@@ -81,31 +94,27 @@ def main():
         if pressed[K_d]:
             movement_x += speed
 
+
         #Incremento la velocidad si esta corriendo:
         if pressed[K_LSHIFT]:
             movement_x = movement_x * run_speed_multiplier
             movement_y = movement_y * run_speed_multiplier
 
-
-        #print ("Player pos : " + str(player.x) + "," + str(player.y) )
-        #modelo.Character.Character.move(player, movement_x, movement_y)
-        #player.move(movement_x, movement_y)
-        player.move(movement_x, 0)
-        player.move(0, movement_y)
-        camera.draw_fog(player.x,player.y)
-
+        player.set_speed(movement_x, movement_y)
+        #print ("player Position : " + util.Util.position_to_string(player.rect.x, player.rect.y))
+        #UPDATE :
+        tileMap.update()
         camera.update()
+        #DRAW:
         camera.fill_background()
         tileMap.draw(camera)
-        camera.draw_drawable(player)
-
-        #tileMap.draw(camera)
-        #player.draw(camera)
-
-
-
-        #screen.fill(gris)
+        #camera.draw_drawable(player)
         pygame.display.flip()
+
+        #Chequeamos si el player sigue vivo.
+        #En caso contrario, salimos del Main Loop.
+        if player.is_dead:
+            running = False
 
 if __name__ == '__main__':
     main()

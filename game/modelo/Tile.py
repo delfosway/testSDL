@@ -8,13 +8,34 @@ __maintainer__ = "Ignacio Oliveto"
 __email__ = "igoliveto@gmail.com"
 __status__ = "Prototype"
 
-class Tile:
-    def __init__(self, walkable, sprite, x, y, event):
+import pygame
+
+
+class Tile (pygame.sprite.Sprite):
+
+    TILE_WIDTH = 64  # Pixels
+    TILE_HEIGHT = 64  # Pixels
+
+    TILE_COLLIDER_WIDTH = 60
+    TILE_COLLIDER_HEIGHT = 60
+
+    def __init__(self, walkable, image, x, y, event):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = pygame.rect.Rect((0, 0) , (self.TILE_COLLIDER_WIDTH, self.TILE_COLLIDER_HEIGHT))
+        self.x = 0
+        self.y = 0
+        self.set_position(x, y)
         self.walkable = walkable
-        self.sprite = sprite
+        self.event = event
+
+    def set_position(self, x, y):
         self.x = x
         self.y = y
-        self.event = event
+        self.rect.x = x * self.TILE_WIDTH
+        self.rect.y = y * self.TILE_HEIGHT
+        #print("Tile [" + str(self.x) + "," + str(self.y) + "] Rect position : [" + str(
+        #    self.rect.x) + "," + str(self.rect.y) + "]")
 
     def set_event(self,event):
         self.event = event
@@ -22,6 +43,12 @@ class Tile:
     def is_walkable(self):
         return self.walkable
 
+    def get_rect(self):
+        return self.rect
+
+    def copy(self):
+        new_tile = Tile(self.walkable, self.image, self.x, self.y, self.event)
+        return new_tile
 
 class TileEvent:
 
