@@ -11,11 +11,14 @@ __status__ = "Prototype"
 #
 
 import pygame
+import util.Util
 
 class Bullet(pygame.sprite.Sprite):
 
     BULLET_SPRITE_WIDTH = 16
     BULLET_SPRITE_HEIGHT = 16
+
+    BULLET_MAX_DISTANCE = 600
 
     def __init__(self, x, y, image, source, dmg, speed_x, speed_y, map):
         pygame.sprite.Sprite.__init__(self)
@@ -23,7 +26,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
+        self.travelled_distance = 0
         self.source = source #Character
         self.dmg = dmg #Damage - int
         self.speed_x = speed_x #Speed on X
@@ -55,15 +58,20 @@ class Bullet(pygame.sprite.Sprite):
         camera.draw_drawable(self)
 
     def update(self):
-        self.move(self.speed_x, 0)
-        self.move(0, self.speed_y)
+        self.move(self.speed_x, self.speed_y)
+        #self.move(0, self.speed_y)
 
     def move(self, x, y):
 
         if (x != 0 or y != 0):
             self.rect.x += x
             self.rect.y += y
-            if self.is_colliding_with_walls():
+
+            self.travelled_distance += util.Util.hypotenuse(x, y)
+
+            if self.travelled_distance >= self.BULLET_MAX_DISTANCE:
+                self.destroy()
+            elif self.is_colliding_with_walls():
                 self.collide_with_wall()
             elif self.is_colliding_with_bullets():
                 self.collide_with_bullet()
@@ -88,8 +96,8 @@ class Bullet(pygame.sprite.Sprite):
         bullets = self.current_map.bullets
         rect = self.generate_rect()
         for bullet in bullets:
-            if rect.colliderect(bullet):
-                if (bullet != self):
+            if bullet != self:
+                if rect.colliderect(bullet):
                     #print ("Bullet collided with Bullet!")
                     return True
         return False

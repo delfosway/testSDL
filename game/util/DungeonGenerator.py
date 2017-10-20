@@ -77,5 +77,13 @@ def crearHabitaciones(tamaño_mapa_x, tamaño_mapa_y):
 
         mapa[cordPuerta[0]][cordPuerta[1]] = 0
 
+    for x in range(tamaño_mapa_x):
+        mapa[x][0] = 1
+        mapa[x][tamaño_mapa_y - 1] = 1
+    for y in range(tamaño_mapa_y):
+        mapa[0][y] = 1
+        mapa[tamaño_mapa_x - 1][y] = 1
+
+
     return (mapa)
 

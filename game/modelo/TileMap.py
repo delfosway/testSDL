@@ -59,11 +59,10 @@ class TileMap:
 
     def draw(self, camera):
         #Primero dibujamos los tiles.
-        for x in range(self.MAP_WIDTH):
-            for y in range(self.MAP_HEIGHT):
-                tile = self.tiles[x][y]
+
                 #print ("Dibujando Tile : [" + str(x) + "," + str(y) + "]")
-                camera.draw_drawable(tile)
+        #camera.draw_drawable(tile)
+        camera.draw_map(self)
 
         #Luego dibujamos los Characters
         for character in self.characters:
@@ -117,13 +116,16 @@ class TileMap:
             raise NameError("Grid out of Boundaries.")
 
     def set_tile(self, x, y, tile):
-        if x < 0 or x >= self.MAP_WIDTH or y < 0 or y >= self.MAP_HEIGHT:
+        if self.is_index_out_of_bounds(x, y):
             raise NameError("X or Y is out of map boundaries! X = " + str(x) + ", Y = " + str(y))
         else:
             tile.set_position(x, y)
             self.tiles[x][y] = tile
             if not tile.is_walkable():
                 self.walls.append(tile)
+
+    def is_index_out_of_bounds(self, x, y):
+        return x < 0 or x >= self.MAP_WIDTH or y < 0 or y >= self.MAP_HEIGHT
 
     #TESTING
     def print_grid(self, grid):

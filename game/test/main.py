@@ -94,7 +94,6 @@ def main():
         if pressed[K_d]:
             movement_x += speed
 
-
         #Incremento la velocidad si esta corriendo:
         if pressed[K_LSHIFT]:
             movement_x = movement_x * run_speed_multiplier

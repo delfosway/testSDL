@@ -8,5 +8,10 @@ __maintainer__ = "Martin Rios"
 __email__ = "riosmartin93@gmail.com"
 __status__ = "Prototype"
 
+import math
+
 def position_to_string (x, y):
     return "[" + str(x) + "," + str(y) + "]"
+
+def hypotenuse (x, y):
+    return math.sqrt( math.fabs(x * x) + math.fabs(y * y))
