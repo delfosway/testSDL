@@ -43,6 +43,9 @@ class Camera:
     def fill_background(self):
         self.screen.fill(util.Graphics.BLACK)
 
+    def fill_menu(self):
+        self.screen.fill(util.Graphics.WHITE)
+
     def total_x_offset(self):
         return self.offset_x - (self.camera_width / 2)
 

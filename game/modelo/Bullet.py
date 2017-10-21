@@ -88,6 +88,12 @@ class Bullet(pygame.sprite.Sprite):
         rect = self.generate_rect()
         for wall in walls:
             if rect.colliderect(wall):
+                channel = pygame.mixer.find_channel(3)
+                if not channel.get_busy():
+                    channel.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
+                else:
+                    channel2 = pygame.mixer.find_channel(4)
+                    channel2.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
                 #print("Bullet collided with Wall!")
                 return True
         return False
@@ -108,6 +114,12 @@ class Bullet(pygame.sprite.Sprite):
         for character in characters:
             if rect.colliderect(character):
                 if character != self.source:
+                    channel = pygame.mixer.find_channel(5)
+                    if not channel.get_busy():
+                        channel.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
+                    else:
+                        channel2 = pygame.mixer.find_channel(6)
+                        channel2.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
                     #print("Bullet collided with Character!")
                     return character
         return False
