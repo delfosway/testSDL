@@ -123,4 +123,3 @@ class Bullet(pygame.sprite.Sprite):
                     #print("Bullet collided with Character!")
                     return character
         return False
-

@@ -51,7 +51,7 @@ class Character (pygame.sprite.Sprite):
             self.equipment = modelo.Equipment.Equipment(None)
 
     def shoot(self, speed_x, speed_y):
-        self.current_map.spawn_bullet(modelo.Bullet.Bullet(self.rect.x, self.rect.y, pygame.image.load("Graficos/misil1.png").convert_alpha(), self, 10,speed_x, speed_y, self.current_map))
+        self.current_map.spawn_bullet(modelo.Bullet.Bullet(self.rect.x, self.rect.y, pygame.image.load("Graficos/fireball red.png").convert_alpha(), self, 10,speed_x, speed_y, self.current_map))
 
     def set_speed(self, speed_x, speed_y):
         self.speed_x = speed_x

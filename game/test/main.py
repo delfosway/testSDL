@@ -45,7 +45,7 @@ def main():
     menu = True
     main_menu(menu, camera)
 
-    PLAYER_SPRITE = pygame.image.load("Graficos/Bicho.png").convert_alpha()
+    PLAYER_SPRITE = pygame.image.load("Graficos/archon.png").convert_alpha()
 
     characters = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
