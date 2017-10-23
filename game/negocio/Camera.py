@@ -90,7 +90,7 @@ class Camera:
             for y in range(player_map_y - tile_radius, player_map_y + tile_radius):
                 if not map.is_index_out_of_bounds(x, y):
                     if self.is_on_light_radius(map.tiles[x][y]):
-                        self.draw_drawable(map.tiles[x][y])
+                        map.tiles[x][y].draw(self)
 
     def draw_rect(self, rect):
         if self.is_rect_on_light_radius(rect):

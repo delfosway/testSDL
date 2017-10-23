@@ -39,8 +39,6 @@ class TileMap:
 
     def update(self):
 
-
-
         # Primero actualizamos los Characters:
         for character in self.characters[:]:
             if character.is_dead:  # Si esta "Muerto", lo sacamos de la lista.

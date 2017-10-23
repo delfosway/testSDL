@@ -37,6 +37,11 @@ class Tile (pygame.sprite.Sprite):
         #print("Tile [" + str(self.x) + "," + str(self.y) + "] Rect position : [" + str(
         #    self.rect.x) + "," + str(self.rect.y) + "]")
 
+    def draw(self, camera):
+        camera.draw_drawable(self)
+        if self.event is not None:
+            camera.draw_sprite(self.event.sprite, self.rect.x, self.rect.y)
+
     def set_event(self,event):
         self.event = event
 
