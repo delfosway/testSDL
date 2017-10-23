@@ -9,6 +9,7 @@ __email__ = "riosmartin93@gmail.com"
 __status__ = "Prototype"
 
 import negocio.ItemManager
+import negocio.CharacterManager
 
 class GameManager:
     def __init__(self):
@@ -17,6 +18,7 @@ class GameManager:
         self.current_gold = 0
         self.total_gold = 0
         self.item_manager = negocio.ItemManager.ItemManager()
+        self.character_manager = negocio.CharacterManager.CharacterManager()
 
     def set_current_player(self,character):
         self.current_player = character

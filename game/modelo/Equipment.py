@@ -22,7 +22,7 @@ class Equipment:
         self.character = character
         self.items = [None, None, None]
 
-    def equip(self,item):
+    def equip(self, item):
         self.items[item.item_type] = item
 
     def total_ac(self):
@@ -31,6 +31,10 @@ class Equipment:
             if item is not None:
                 total_ac += item.ac
         return total_ac
+
+    def copy(self):
+        new_equipment = Equipment(self.character)
+        new_equipment.items = self.items
 
     def total_dmg(self):
         total_dmg = 0

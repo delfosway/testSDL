@@ -20,7 +20,9 @@ class Bullet(pygame.sprite.Sprite):
 
     BULLET_MAX_DISTANCE = 600
 
-    def __init__(self, x, y, image, source, dmg, speed_x, speed_y, map):
+    bullet_destruction_sound = None
+
+    def __init__(self, x, y, image, source, dmg, speed_x, speed_y, map, fire_sound):
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
@@ -33,9 +35,15 @@ class Bullet(pygame.sprite.Sprite):
         self.speed_y = speed_y #Speed on Y
         self.current_map = map
         self.is_alive = True
+        self.fire_sound = fire_sound
+        self.load_sounds()
+
+    def load_sounds(self):
+        if self.bullet_destruction_sound is None:
+            self.bullet_destruction_sound = pygame.mixer.Sound("SFX/explosion.ogg")
 
     def collide_with_character(self, character):
-        character.receive_damage(self.dmg)
+        character.receive_damage(self.dmg, self.source)
         self.destroy()
 
     def is_alive(self):
@@ -52,6 +60,12 @@ class Bullet(pygame.sprite.Sprite):
 
     def destroy(self):
         self.kill()
+        channel = pygame.mixer.find_channel(3)
+        if not channel.get_busy():
+            channel.queue(self.bullet_destruction_sound)
+        else:
+            channel2 = pygame.mixer.find_channel(4)
+            channel2.queue(self.bullet_destruction_sound)
         self.is_alive = False
 
     def draw(self, camera):
@@ -88,12 +102,6 @@ class Bullet(pygame.sprite.Sprite):
         rect = self.generate_rect()
         for wall in walls:
             if rect.colliderect(wall):
-                channel = pygame.mixer.find_channel(3)
-                if not channel.get_busy():
-                    channel.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
-                else:
-                    channel2 = pygame.mixer.find_channel(4)
-                    channel2.queue(pygame.mixer.Sound("SFX/explosion.ogg"))
                 #print("Bullet collided with Wall!")
                 return True
         return False

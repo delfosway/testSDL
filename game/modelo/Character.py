@@ -12,14 +12,14 @@ import modelo.Equipment
 import modelo.Tile
 import modelo.Bullet
 import pygame
-
-
+import util.Vector
+import util.Util
 
 
 class Character (pygame.sprite.Sprite):
 
     BASE_AC_LVL_MULTIPLIER = 1
-    BASE_DMG_LVL_MULTIPLIER = 2
+    BASE_DMG_LVL_MULTIPLIER = 5
 
     CHARACTER_SPRITE_WIDTH = 64
     CHARACTER_SPRITE_HEIGHT = 64
@@ -27,7 +27,13 @@ class Character (pygame.sprite.Sprite):
     CHARACTER_COLLIDER_WIDTH = 60
     CHARACTER_COLLIDER_HEIGHT = 60
 
-    def __init__(self, image, lvl, max_hp, max_mp, equipment = None):
+    BULLET_SPEED = 10
+
+    SHOOT_COOLDOWN = 60
+    PLAYER_SHOOT_COOLDOWN = 15
+    AI_SIGHT_DISTANCE = 300
+
+    def __init__(self, image, lvl, base_max_hp, base_max_mp, bullet_sound, bullet_image, death_sound, equipment = None):
         pygame.sprite.Sprite.__init__(self)
         self.name = "Test Character"
         self.image = image
@@ -39,28 +45,102 @@ class Character (pygame.sprite.Sprite):
         self.speed_y = 0
         #self.sprite = sprite
 
+        self.gold = 0
 
-
-        self.max_hp = max_hp
-        self.max_mp = max_mp
+        self.base_max_hp = base_max_hp
+        self.base_max_mp = base_max_mp
+        self.max_hp = 0
+        self.max_mp = 0
+        self.hp = 0
+        self.mp = 0
+        self.lvl = 0
+        self.set_lvl(lvl)
 
         self.is_dead = False
-        self.lvl = lvl
+
         self.current_map = None
+        self.bullet_sound = bullet_sound
+        self.bullet_image = bullet_image
+        self.death_sound = death_sound
+
+        self.frames_since_last_shot = 0
+
         if equipment == None:
             self.equipment = modelo.Equipment.Equipment(None)
 
+    def add_gold(self, amount):
+        self.gold += amount
+
+    def set_lvl(self, lvl):
+        self.lvl = lvl
+        self.max_hp = self.base_max_hp * self.lvl
+        self.max_mp = self.base_max_mp * self.lvl
+        self.hp = self.max_hp
+        self.mp = self.max_mp
+
     def shoot(self, speed_x, speed_y):
-        self.current_map.spawn_bullet(modelo.Bullet.Bullet(self.rect.x, self.rect.y, pygame.image.load("Graficos/fireball red.png").convert_alpha(), self, 10,speed_x, speed_y, self.current_map))
+        if self.is_player():
+            if self.frames_since_last_shot < self.PLAYER_SHOOT_COOLDOWN:
+                return
+        else:
+            if self.frames_since_last_shot < self.SHOOT_COOLDOWN:
+                return
+        self.frames_since_last_shot = 0
+        self.play_shoot_sound(self.bullet_sound)
+        self.current_map.spawn_bullet(modelo.Bullet.Bullet(self.rect.x, self.rect.y, self.bullet_image, self, 10,speed_x, speed_y, self.current_map, self.bullet_sound))
+
+    def shoot_at(self, x, y):
+
+        diff_vector = util.Vector.Vector(x - self.rect.x, y - self.rect.y)
+        diff_vector.normalizar()
+        self.shoot(diff_vector.x * self.BULLET_SPEED, diff_vector.y * self.BULLET_SPEED)
+
+    #def shoot_at(self, x, y):
+     #   diff_vector = util.Vector.Vector(x - player.rect.x, y - player.rect.y)
+      #  mouse_vector.normalizar()
+       # self.shoot(mouse_vector.x * 10, mouse_vector.y * 10)
+
+    def play_shoot_sound(self, sound):
+        channel = pygame.mixer.find_channel(1)
+        if not channel.get_busy():
+            channel.queue(sound)
+        else:
+            channel2 = pygame.mixer.find_channel(2)
+            channel2.queue(sound)
+
+    def play_death_sound(self):
+        channel = pygame.mixer.find_channel(6)
+        if not channel.get_busy():
+            channel.queue(self.death_sound)
+        else:
+            channel2 = pygame.mixer.find_channel(7)
+            channel2.queue(self.death_sound)
 
     def set_speed(self, speed_x, speed_y):
         self.speed_x = speed_x
         self.speed_y = speed_y
 
     def update(self):
+        self.update_frames()
+        if not self.is_player():
+            self.AI_play()
         self.move(self.speed_x, 0)
         self.move(0, self.speed_y)
         #print ("Updating Character...")
+
+    def update_frames(self):
+        self.frames_since_last_shot += 1
+
+    def is_player(self):
+        return self.current_map.game_manager.current_player == self
+
+    def AI_play(self):
+        player = self.current_map.game_manager.current_player
+        if util.Util.distance(self.rect.x, self.rect.y, player.rect.x, player.rect.y) < self.AI_SIGHT_DISTANCE:
+            self.shoot_at(player.rect.x, player.rect.y)
+            #self.set_speed_towards(player)
+
+    #def set_speed_towards
 
     def move(self, x, y):
         if (x != 0 or y != 0):
@@ -71,9 +151,9 @@ class Character (pygame.sprite.Sprite):
             if self.is_colliding_with_wall(): #colliding
                 self.rect.x = old_x
                 self.rect.y = old_y
-            #elif self.is_colliding_with_character():
-            #    self.rect.x = old_x
-            #    self.rect.y = old_y
+            elif self.is_colliding_with_character():
+                self.rect.x = old_x
+                self.rect.y = old_y
 
     def is_colliding_with_wall(self):
         walls = self.current_map.walls
@@ -88,13 +168,17 @@ class Character (pygame.sprite.Sprite):
         rect = self.get_rect()
         for character in characters:
             if rect.colliderect(character.rect):
-                return True
+                if character != self:
+                    return True
         return False
 
     def spawn(self, map, map_x, map_y):
         self.current_map = map
         self.rect.x = map_x * modelo.Tile.Tile.TILE_WIDTH
         self.rect.y = map_y * modelo.Tile.Tile.TILE_HEIGHT
+
+    def killed_character(self, killed_character):
+        self.add_gold(killed_character.lvl)
 
     def base_ac(self):
         return self.lvl * self.BASE_AC_LVL_MULTIPLIER
@@ -105,12 +189,13 @@ class Character (pygame.sprite.Sprite):
     def total_ac(self):
         return self.equipment.total_ac() + self.base_ac()
 
-    def receive_damage (self, damage_amount):
+    def receive_damage (self, damage_amount, source):
         hp_to_substract = damage_amount - self.total_ac()
         if hp_to_substract <= 0:
             hp_to_substract = 1
         self.subtract_hp(hp_to_substract)
-
+        if self.is_dead:
+            source.killed_character(self)
 
     def heal (self, heal_amount):
         self.add_hp(heal_amount)
@@ -123,7 +208,11 @@ class Character (pygame.sprite.Sprite):
     def subtract_hp(self, hp_to_substract):
         self.hp -= hp_to_substract
         if self.hp <= 0:
-            self.is_dead = True
+            self.die()
+
+    def die(self):
+        self.is_dead = True
+        self.play_death_sound()
 
     def add_mp(self, mp_to_add):
         self.mp += mp_to_add
@@ -137,6 +226,13 @@ class Character (pygame.sprite.Sprite):
 
     def draw(self, camera):
         camera.draw_drawable(self)
+        self.draw_health_bar(camera)
+
+    def draw_health_bar(self, camera):
+        bar_length = int(max(min(self.hp / float(self.max_hp) * 64, 64), 0))
+        rect = pygame.rect.Rect(self.rect.x, self.rect.y + 64, bar_length, 4)
+        camera.draw_rect(rect)
+        #print ("Rect Length : " + bar_length)
 
     def get_rect(self):
         return self.rect
@@ -148,3 +244,10 @@ class Character (pygame.sprite.Sprite):
         self.ey = ey
 
 
+    def copy(self):
+        new_character = Character(self.image, self.lvl, self.max_hp, self.max_mp, self.bullet_sound, self.bullet_image, self.equipment.copy())
+        return new_character
+
+    def fresh_copy(self):
+        new_character = Character(self.image, self.lvl, self.max_hp, self.max_mp, self.bullet_sound, self.bullet_image, self.death_sound, None)
+        return new_character

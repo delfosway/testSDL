@@ -11,10 +11,11 @@ import util.DungeonGenerator
 import util.Graphics
 import util.Util
 import util.Vector
+import negocio.CharacterManager
 
 game_manager = None
 item_manager = None
-
+character_manager = None
 FPS = 60
 
 clock = pygame.time.Clock()
@@ -28,16 +29,20 @@ def create_test_grid():
 
     for x in range(modelo.TileMap.TileMap.MAP_WIDTH):
         for y in range(modelo.TileMap.TileMap.MAP_HEIGHT):
-            if (x == 0 or y == 0 or x == modelo.TileMap.TileMap.MAP_WIDTH - 1 or y == modelo.TileMap.TileMap.MAP_HEIGHT - 1):
+            if x == 0 or y == 0 or x == modelo.TileMap.TileMap.MAP_WIDTH - 1 or y == modelo.TileMap.TileMap.MAP_HEIGHT - 1:
                 test_grid[x][y] = 1
-            if (x % 3 == 0 and y % 3 == 0):
+            if x % 3 == 0 and y % 3 == 0:
                 test_grid[x][y] = 1
     return test_grid
 
 def main():
     pygame.init()
+    camera = negocio.Camera.Camera(800, 600)
     game_init()
-    camera = negocio.Camera.Camera(800,600)
+
+
+
+
 
     tuto = True
     tutorial(tuto, camera)
@@ -45,7 +50,7 @@ def main():
     menu = True
     main_menu(menu, camera)
 
-    PLAYER_SPRITE = pygame.image.load("Graficos/archon.png").convert_alpha()
+
 
     characters = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
@@ -54,12 +59,13 @@ def main():
 
     #test_grid = create_test_grid()
     test_grid = util.DungeonGenerator.crearHabitaciones(modelo.TileMap.TileMap.MAP_WIDTH, modelo.TileMap.TileMap.MAP_HEIGHT)
-    tileMap = modelo.TileMap.TileMap()
+    tileMap = modelo.TileMap.TileMap(1, game_manager)
     tileMap.load_from_grid(test_grid)
 
+    tileMap.spawn_random_enemies(300)
 
-    player = modelo.Character.Character(PLAYER_SPRITE, 1, 300, 300)
-    
+    player = game_manager.character_manager.get_player()
+    game_manager.set_current_player(player)
     tileMap.spawn_character_at_random_walkable(player)
     #player.spawn(tileMap, 330, 330)
 
@@ -82,22 +88,22 @@ def main():
                 pygame.quit()
                 exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    x, y = camera.get_mouse_map_position()
-                    #print("Mouse Position : " + util.Util.position_to_string(x, y))
-                    mouse_vector = util.Vector.Vector(x - player.rect.x, y - player.rect.y)
-                    mouse_vector.normalizar()
-                    channel = pygame.mixer.find_channel(1)
-                    if not channel.get_busy():
-                        channel.queue(pygame.mixer.Sound("SFX/shoot2.ogg"))
-                    else:
-                        channel2 = pygame.mixer.find_channel(2)
-                        channel2.queue(pygame.mixer.Sound("SFX/shoot2.ogg"))
-                    #print("Mouse Vector : " + util.Util.position_to_string(x,y) + " - Angle : " + util.Util.position_to_string(mouse_vector.x, mouse_vector.y))
-                    player.shoot(mouse_vector.x * 10, mouse_vector.y * 10)
                 if event.key == pygame.K_ESCAPE:
                     paused = True
                     pause(paused, camera)
+
+
+
+            #if event.type == pyg   ame.MOUSEBUTTONDOWN:
+#                x, y = camera.get_mouse_map_position()
+#                player.shoot_at(x, y)
+
+        if pygame.mouse.get_pressed()[0]:
+            try:
+                x, y = camera.get_mouse_map_position()
+                player.shoot_at(x, y)
+            except AttributeError:
+                pass
 
         movement_x = 0
         movement_y = 0
@@ -126,6 +132,7 @@ def main():
         #DRAW:
         camera.fill_background()
         tileMap.draw(camera)
+        camera.draw_text("Gold  " + str(player.gold), 0, 0)
         #camera.draw_drawable(player)
         pygame.display.flip()
 
@@ -145,15 +152,18 @@ def main_menu(state, camera):
                     state = False
 
         camera.fill_menu()
-        menu_text = pygame.font.Font('arial.ttf', 50)
-        text_surface, text_rect = text_draw("Welcome to the main menu", menu_text)
-        text_rect = 80, 100
-        camera.screen.blit(text_surface, text_rect)
+        camera.draw_text("Welcome to the main menu", 200, 150, util.Graphics.BLACK)
+        #menu_text = pygame.font.Font('arial.ttf', 50)
+        #text_surface, text_rect = text_draw("Welcome to the main menu", menu_text)
+        #text_rect = 80, 100
+        #camera.screen.blit(text_surface, text_rect)
+        camera.draw_text("Press enter to start the game", 160, 350, util.Graphics.BLACK)
 
-        menu_text2 = pygame.font.Font('arial.ttf', 35)
-        text_surface2, text_rect2 = text_draw("Press enter to start the game", menu_text2)
-        text_rect2 = 160, 400
-        camera.screen.blit(text_surface2, text_rect2)
+
+        #menu_text2 = pygame.font.Font('arial.ttf', 35)
+        #text_surface2, text_rect2 = text_draw("Press enter to start the game", menu_text2)
+        #text_rect2 = 160, 400
+        #camera.screen.blit(text_surface2, text_rect2)
         pygame.display.update()
 
 
@@ -167,28 +177,44 @@ def tutorial(state, camera):
                 if event.key == pygame.K_RETURN:
                     state = False
 
+        text_x = 250
+
         camera.fill_menu()
-        menu_text = pygame.font.Font('arial.ttf', 115)
-        text_surface, text_rect = text_draw("How to play", menu_text)
-        text_rect = 100, 25
-        camera.screen.blit(text_surface, text_rect)
 
-        menu_text2 = pygame.font.Font('arial.ttf', 30)
-        text_surface2, text_rect2 = text_draw("Movement: w, a, s, d", menu_text2)
-        text_rect2 = 220, 200
-        camera.screen.blit(text_surface2, text_rect2)
+        camera.draw_text("HOW TO PLAY", 300, 100, util.Graphics.BLACK, 115)
 
-        text_surface3, text_rect3 = text_draw("You aim with the mouse", menu_text2)
-        text_rect3 = 220, 300
-        camera.screen.blit(text_surface3, text_rect3)
+        #menu_text = pygame.font.Font('arial.ttf', 115)
+        #text_surface, text_rect = text_draw("How to play", menu_text)
+        #text_rect = 100, 25
+        #camera.screen.blit(text_surface, text_rect)
 
-        text_surface4, text_rect4 = text_draw("Shoot: [spacebar]", menu_text2)
-        text_rect4 = 220, 400
-        camera.screen.blit(text_surface4, text_rect4)
+        #camera.draw_text("How to play", 120, 200, util.Graphics.BLACK, 30)
 
-        text_surface5, text_rect5 = text_draw("Press enter to continue", menu_text2)
-        text_rect5 = 200, 500
-        camera.screen.blit(text_surface5, text_rect5)
+        camera.draw_text("MOVE WITH W, A, S, D", text_x, 250, util.Graphics.BLACK, 30)
+
+        #menu_text2 = pygame.font.Font('arial.ttf', 30)
+        #text_surface2, text_rect2 = text_draw("Movement: w, a, s, d", menu_text2)
+        #text_rect2 = 220, 200
+        #camera.screen.blit(text_surface2, text_rect2)
+
+        camera.draw_text("AIM WITH YOUR MOUSE", text_x, 300, util.Graphics.BLACK, 30)
+
+        #text_surface3, text_rect3 = text_draw("You aim with the mouse", menu_text2)
+        #text_rect3 = 220, 300
+        #camera.screen.blit(text_surface3, text_rect3)
+
+
+        camera.draw_text("SHOOT WITH [MOUSE1]", text_x, 400, util.Graphics.BLACK, 30)
+
+        #text_surface4, text_rect4 = text_draw("Shoot: [MOUSE1]", menu_text2)
+        #text_rect4 = 220, 400
+        #camera.screen.blit(text_surface4, text_rect4)
+
+        camera.draw_text("PRESS ENTER TO CONTINUE", text_x - 20, 500, util.Graphics.BLACK, 30)
+
+        #text_surface5, text_rect5 = text_draw("Press enter to continue", menu_text2)
+        #text_rect5 = 200, 500
+        #camera.screen.blit(text_surface5, text_rect5)
         pygame.display.update()
 
 def text_draw(text, font):

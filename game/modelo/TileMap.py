@@ -11,7 +11,7 @@ __status__ = "Prototype"
 import modelo.Tile
 import pygame
 from  random import  randint
-import copy
+import negocio.CharacterManager
 
 class TileMap:
 
@@ -28,33 +28,42 @@ class TileMap:
     TILE_WALL = 1
 
 
-    def __init__(self):
+    def __init__(self, lvl, game_manager):
         self.tiles = [[None for x in range(self.MAP_WIDTH)] for y in range(self.MAP_HEIGHT)]
         self.walls = []
         self.characters = []
         self.bullets = []
         self.load_default_tiles()
+        self.lvl = lvl
+        self.game_manager = game_manager
 
     def update(self):
 
 
 
         # Primero actualizamos los Characters:
-        for character in self.characters:
-            character.update()
+        for character in self.characters[:]:
+            if character.is_dead:  # Si esta "Muerto", lo sacamos de la lista.
+                self.characters.remove(character)
+            else:
+                character.update()
 
         # Luego actualizamos los Bullets
 
-        #Primero chequeamos los que esten "muertos" y los sacamos de la lista.
-
-        #self.bullets[:]  = [bul for bul in self.bullets if bul.is_alive()]
-
         for bullet in self.bullets[:]:
-            if bullet.is_dead():
+            if bullet.is_dead(): #Si esta "Muerto", lo sacamos de la lista.
                 self.bullets.remove(bullet)
             else:
                 bullet.update()
 
+    def spawn_random_enemies(self, amount):
+        enemy_count = amount
+        while enemy_count > 0:
+            tile = self.get_random_walkable_tile()
+            if self.spawn_character_at_tile(self.game_manager.character_manager.get_random_enemy(self.lvl),tile):
+                enemy_count -= 1
+            else:
+                enemy_count = 0
 
 
     def draw(self, camera):
@@ -66,11 +75,13 @@ class TileMap:
 
         #Luego dibujamos los Characters
         for character in self.characters:
-            camera.draw_drawable(character)
+            character.draw(camera)
+            #camera.draw_drawable(character)
 
         #Y por ultimo los Bullets.
         for bullet in self.bullets:
-            camera.draw_drawable(bullet)
+            bullet.draw(camera)
+            #camera.draw_drawable(bullet)
 
     def get_map_graphic_width(self):
         return self.MAP_WIDTH * modelo.Tile.Tile.TILE_WIDTH , self.MAP_HEIGHT * modelo.Tile.Tile.TILE_HEIGHT
@@ -86,17 +97,25 @@ class TileMap:
             try_count += 1
         raise NameError("Couldn't find a Walkable Tile!")
 
-
     def spawn_character_at_random_walkable(self, character):
         walkable_tile = self.get_random_walkable_tile()
-        self.spawn_character_at_tile(character, walkable_tile)
+        return self.spawn_character_at_tile(character, walkable_tile)
 
     def spawn_character_at_tile(self, character, tile):
-        self.spawn_character_at_pos(character, tile.x, tile.y)
+        return self.spawn_character_at_pos(character, tile.x, tile.y)
 
     def spawn_character_at_pos(self, character, x, y):
-        self.characters.append(character)
-        character.spawn(self, x, y)
+
+        max_tries = 100
+        encontrado = False
+        while max_tries > 0 and not encontrado:
+            character.spawn(self, x, y)
+            if not character.is_colliding_with_character():
+                self.characters.append(character)
+                encontrado = True
+            max_tries -= 1
+
+        return encontrado
 
     def spawn_bullet(self, bullet):
         self.bullets.append(bullet)

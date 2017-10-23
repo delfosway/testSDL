@@ -59,7 +59,7 @@ def crearHabitaciones(tamaño_mapa_x, tamaño_mapa_y):
         for b in range(0, tamaño_mapa_y):
             mapa[a][b] = 0
     for y in range(0, 100000):
-        roomB = Room(randint(0, tamaño_mapa_x - ROOM_MAX_SIZE - 1), randint(0, tamaño_mapa_y - ROOM_MAX_SIZE - 1), randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE), randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE))
+        roomB = Room(randint(2, tamaño_mapa_x - ROOM_MAX_SIZE - 3), randint(2, tamaño_mapa_y - ROOM_MAX_SIZE - 3), randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE), randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE))
 
         if roomB.puedeSerConstruido(listaDeHabitaciones):
             listaDeHabitaciones.append(roomB)
