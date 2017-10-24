@@ -74,3 +74,9 @@ class TileEvent:
             character.receive_damage(self.dmg_to_deal)
         if self.next_lvl:
             game_manager.go_to_next_lvl()
+
+    def copy ():
+        new_event = TileEvent(self.tile, self.sprite, self.hp, self.mp, self.dmg_to_deal, self.next_lvl)
+
+        return new_event
+
