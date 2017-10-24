@@ -57,14 +57,14 @@ class Tile (pygame.sprite.Sprite):
 
 class TileEvent:
 
-    def __init__(self, tile, sprite , hp = 0, mp = 0, dmg_to_deal = 0, next_lvl = False):
+    def __init__(self, tile, sprite , hp = 0, mp = 0, dmg_to_deal = 0,gold = 0, next_lvl = False):
         self.tile = tile
         self.sprite = sprite
         self.hp = hp
         self.mp = mp
         self.dmg_to_deal = dmg_to_deal
         self.next_lvl = next_lvl
-
+        self.gold = gold
     def apply(self, character, game_manager):
         if self.hp > 0:
             character.heal(self.hp)
@@ -74,6 +74,8 @@ class TileEvent:
             character.receive_damage(self.dmg_to_deal)
         if self.next_lvl:
             game_manager.go_to_next_lvl()
+        if self.gold>0 :
+            character.add_gold(self.gold)
 
     def copy ():
         new_event = TileEvent(self.tile, self.sprite, self.hp, self.mp, self.dmg_to_deal, self.next_lvl)
