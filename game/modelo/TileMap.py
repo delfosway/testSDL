@@ -19,6 +19,7 @@ class TileMap:
     FLOOR_TILE_SPRITE_STRING = "Graficos/wood.png"
     WALL_TILE_SPRITE_STRING = "Graficos/wall.png"
     HP_POTION_STRING = "Graficos/potion red.png"
+    GOLD_STRING = "Graficos/potion green.png"
     MAP_WIDTH = 64 #Tiles
     MAP_HEIGHT = 64 #Tiles
 
@@ -203,15 +204,28 @@ class TileMap:
     def generate_tile_event (self):
         aux_tile = self.get_random_walkable_tile()
         print (aux_tile.x,aux_tile.y)
-        event = self.tile_hp_event
+        event = self.get_random_tile_event()
         aux_tile.set_event(event)
 
     def load_hp_event (self):
-        self.tile_hp_event = modelo.Tile.TileEvent (None, pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0,0,False)
+        self.tile_hp_event = modelo.Tile.TileEvent (None, pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0,0,0,False)
+
+    def load_tile_gold_event(self):
+        self.tile_gold_event = modelo.Tile.TileEvent(None, pygame.image.load(self.GOLD_STRING).convert_alpha(), 50,0, 0,10, False)
 
     def load_default_event_tiles(self):
         self.load_hp_event()
+        self.load_tile_gold_event()
 
     def set_event(self, event):
             self.event = event
             event.tile = self
+
+    def get_random_tile_event(self):
+        aux_rand=randint(0,1)
+        aux_event=None
+        if aux_rand==0:
+            aux_event = self.tile_gold_event
+        if aux_rand==1:
+            aux_event= self.tile_hp_event
+        return  aux_event
