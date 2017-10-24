@@ -29,7 +29,6 @@ class Tile (pygame.sprite.Sprite):
         self.walkable = walkable
         self.event = event
 
-
     def set_position(self, x, y):
         self.x = x
         self.y = y
@@ -43,14 +42,8 @@ class Tile (pygame.sprite.Sprite):
         if self.event is not None:
             camera.draw_sprite(self.event.sprite, self.rect.x, self.rect.y)
 
-    def update(self):
-        if self.event is not None:
-            if self.event.is_dead:
-                self.event = None
-
     def set_event(self,event):
         self.event = event
-        event.set_tile(self)
 
     def is_walkable(self):
         return self.walkable
@@ -71,14 +64,8 @@ class TileEvent:
         self.mp = mp
         self.dmg_to_deal = dmg_to_deal
         self.next_lvl = next_lvl
-<<<<<<< HEAD
         self.gold = gold
     def apply(self, character, game_manager):
-=======
-        self.is_dead = False
-
-    def apply(self, character):
->>>>>>> 03963ff605ea539bad4b09befeb9ede9cabfa662
         if self.hp > 0:
             character.heal(self.hp)
         if self.mp > 0:
@@ -86,32 +73,12 @@ class TileEvent:
         if self.dmg_to_deal > 0:
             character.receive_damage(self.dmg_to_deal)
         if self.next_lvl:
-<<<<<<< HEAD
             game_manager.go_to_next_lvl()
         if self.gold>0 :
             character.add_gold(self.gold)
-=======
-            character.current_map.game_manager.go_to_next_lvl()
-        self.destroy()
->>>>>>> 03963ff605ea539bad4b09befeb9ede9cabfa662
 
-    def set_tile(self, tile):
-        self.tile = tile
-
-    def get_rect(self):
-        if self.tile is not None:
-            return self.tile.get_rect()
-        else:
-            print ("event.tile = None!")
-
-    def is_dead(self):
-        return self.is_dead
-
-    def destroy(self):
-        self.is_dead = True
-        self.tile.update()
-
-    def copy(self):
+    def copy ():
         new_event = TileEvent(self.tile, self.sprite, self.hp, self.mp, self.dmg_to_deal, self.next_lvl)
+
         return new_event
 

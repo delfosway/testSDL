@@ -175,9 +175,6 @@ class Character (pygame.sprite.Sprite):
             elif self.is_colliding_with_character():
                 self.rect.x = old_x
                 self.rect.y = old_y
-            colliding_event = self.is_colliding_with_event()
-            if colliding_event:
-                colliding_event.apply(self)
 
     def is_colliding_with_wall(self):
         walls = self.current_map.walls
@@ -185,14 +182,6 @@ class Character (pygame.sprite.Sprite):
         for wall in walls:
             if rect.colliderect(wall.get_rect()):
                 return True
-        return False
-
-    def is_colliding_with_event(self):
-        events = self.current_map.events
-        rect = self.get_rect()
-        for event in events:
-            if rect.colliderect(event.get_rect()):
-                return event
         return False
 
     def is_colliding_with_character(self):

@@ -39,7 +39,6 @@ class TileMap:
         self.walls = []
         self.characters = []
         self.bullets = []
-        self.events = []
         self.load_default_tiles()
         self.load_default_event_tiles()
         self.lvl = lvl
@@ -62,16 +61,6 @@ class TileMap:
                 self.bullets.remove(bullet)
             else:
                 bullet.update()
-
-        for event in self.events[:]:
-            if event.is_dead: #Si esta "Muerto", lo sacamos de la lista.
-                tile_to_update = event.tile
-                self.events.remove(event)
-                tile_to_update.update()
-            #else:
-            #    event.update()
-
-
 
     def draw(self, camera):
         #Primero dibujamos los tiles.
@@ -212,22 +201,11 @@ class TileMap:
         if self.wall_tile is None:
             self.wall_tile = modelo.Tile.Tile(False, pygame.image.load(self.WALL_TILE_SPRITE_STRING).convert_alpha(), 0, 0, None)
 
-    def generate_random_tile_events(self, event_amount):
-        for x in range(event_amount):
-            self.generate_tile_event()
-
     def generate_tile_event (self):
         aux_tile = self.get_random_walkable_tile()
-<<<<<<< HEAD
         print (aux_tile.x,aux_tile.y)
         event = self.get_random_tile_event()
-=======
-        event = self.tile_hp_event.copy()
->>>>>>> 03963ff605ea539bad4b09befeb9ede9cabfa662
         aux_tile.set_event(event)
-        self.events.append(event)
-
-
 
     def load_hp_event (self):
         self.tile_hp_event = modelo.Tile.TileEvent (None, pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0,0,0,False)
