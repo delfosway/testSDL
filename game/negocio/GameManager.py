@@ -71,8 +71,7 @@ class GameManager:
         self.current_map.spawn_character_at_random_walkable(self.current_player)
         #Spawneamos los enemigos
         self.current_map.spawn_random_enemies(100)
-        for x in range (50):
-            self.current_map.generate_tile_event()
+        self.current_map.generate_random_tile_events(50)
 
     def start_next_lvl(self):
         self.start_lvl(self.current_lvl + 1)
