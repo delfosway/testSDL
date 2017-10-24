@@ -18,16 +18,12 @@ class TileMap:
 
     FLOOR_TILE_SPRITE_STRING = "Graficos/wood.png"
     WALL_TILE_SPRITE_STRING = "Graficos/wall.png"
-    HP_POTION_STRING = "Graficos/potion red.png"
+
     MAP_WIDTH = 64 #Tiles
     MAP_HEIGHT = 64 #Tiles
 
     floor_tile = None
     wall_tile = None
-    tile_hp_event = None
-    tile_gold_event= None
-    tile_next_event = None
-    tile_tramp_event=None
 
     TILE_FLOOR = 0
     TILE_WALL = 1
@@ -39,7 +35,6 @@ class TileMap:
         self.characters = []
         self.bullets = []
         self.load_default_tiles()
-        self.load_default_event_tiles()
         self.lvl = lvl
         self.game_manager = game_manager
 
@@ -143,7 +138,6 @@ class TileMap:
                     #tile_to_set.x = x
                     #tile_to_set.y = y
                     self.set_tile(x, y, tile_to_set)
-
         else:
             raise NameError("Grid out of Boundaries.")
 
@@ -155,7 +149,6 @@ class TileMap:
             self.tiles[x][y] = tile
             if not tile.is_walkable():
                 self.walls.append(tile)
-
 
     def is_index_out_of_bounds(self, x, y):
         return x < 0 or x >= self.MAP_WIDTH or y < 0 or y >= self.MAP_HEIGHT
@@ -191,7 +184,6 @@ class TileMap:
         self.load_wall_tile()
 
 
-
     def load_floor_tile(self):
         if self.floor_tile is None:
             self.floor_tile = modelo.Tile.Tile(True, pygame.image.load(self.FLOOR_TILE_SPRITE_STRING).convert_alpha(), 0, 0, None)
@@ -200,18 +192,3 @@ class TileMap:
         if self.wall_tile is None:
             self.wall_tile = modelo.Tile.Tile(False, pygame.image.load(self.WALL_TILE_SPRITE_STRING).convert_alpha(), 0, 0, None)
 
-    def generate_tile_event (self):
-        aux_tile = self.get_random_walkable_tile()
-        print (aux_tile.x,aux_tile.y)
-        event = self.tile_hp_event
-        aux_tile.set_event(event)
-
-    def load_hp_event (self):
-        self.tile_hp_event = modelo.Tile.TileEvent (None, pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0,0,False)
-
-    def load_default_event_tiles(self):
-        self.load_hp_event()
-
-    def set_event(self, event):
-            self.event = event
-            event.tile = self

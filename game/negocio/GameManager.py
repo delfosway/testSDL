@@ -61,7 +61,6 @@ class GameManager:
         self.current_lvl = lvl
         #Creamos un nuevo Tilemap.
         self.current_map = modelo.TileMap.TileMap(lvl, self)
-
         #Generamos un nuevo mapa aleatorio y construimos el tilemap
         #a partir de el.
         self.current_map.load_from_grid(
@@ -71,8 +70,6 @@ class GameManager:
         self.current_map.spawn_character_at_random_walkable(self.current_player)
         #Spawneamos los enemigos
         self.current_map.spawn_random_enemies(100)
-        for x in range (50):
-            self.current_map.generate_tile_event()
 
     def start_next_lvl(self):
         self.start_lvl(self.current_lvl + 1)
@@ -247,8 +244,6 @@ class GameManager:
             self.camera.draw_text("SHOOT WITH [MOUSE1]", text_x, 400, util.Graphics.BLACK, 30)
 
             self.camera.draw_text("PRESS ENTER TO CONTINUE", text_x - 20, 500, util.Graphics.BLACK, 30)
-
-
 
             pygame.display.update()
 
