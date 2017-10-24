@@ -64,11 +64,12 @@ class Tile (pygame.sprite.Sprite):
 
 class TileEvent:
 
-    def __init__(self, tile, sprite , hp = 0, mp = 0, dmg_to_deal = 0, next_lvl = False):
+    def __init__(self, tile, sprite , hp = 0, mp = 0, dmg_to_deal = 0, gold = 0, next_lvl = False):
         self.tile = tile
         self.sprite = sprite
         self.hp = hp
         self.mp = mp
+        self.gold = gold
         self.dmg_to_deal = dmg_to_deal
         self.next_lvl = next_lvl
         self.is_dead = False
@@ -82,6 +83,8 @@ class TileEvent:
             character.receive_damage(self.dmg_to_deal)
         if self.next_lvl:
             character.current_map.game_manager.go_to_next_lvl()
+        if self.gold > 0:
+            character.add_gold(self.gold)
         self.destroy()
 
     def set_tile(self, tile):
