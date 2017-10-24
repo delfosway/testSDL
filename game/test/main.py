@@ -148,7 +148,7 @@ def main_menu(state, camera):
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
                     state = False
 
         camera.fill_menu()
@@ -167,6 +167,31 @@ def main_menu(state, camera):
         pygame.display.update()
 
 
+def shop_menu(state, camera):
+    while state:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                    state = False
+
+        camera.fill_menu()
+        camera.draw_text("Welcome to the main menu", 200, 150, util.Graphics.BLACK)
+        #menu_text = pygame.font.Font('arial.ttf', 50)
+        #text_surface, text_rect = text_draw("Welcome to the main menu", menu_text)
+        #text_rect = 80, 100
+        #camera.screen.blit(text_surface, text_rect)
+        camera.draw_text("Press enter to start the game", 160, 350, util.Graphics.BLACK)
+
+
+        #menu_text2 = pygame.font.Font('arial.ttf', 35)
+        #text_surface2, text_rect2 = text_draw("Press enter to start the game", menu_text2)
+        #text_rect2 = 160, 400
+        #camera.screen.blit(text_surface2, text_rect2)
+        pygame.display.update()
+
 def tutorial(state, camera):
     while state:
         for event in pygame.event.get():
@@ -174,7 +199,7 @@ def tutorial(state, camera):
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
                     state = False
 
         text_x = 250

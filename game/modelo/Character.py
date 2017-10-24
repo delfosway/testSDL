@@ -32,6 +32,7 @@ class Character (pygame.sprite.Sprite):
     SHOOT_COOLDOWN = 60
     PLAYER_SHOOT_COOLDOWN = 15
     AI_SIGHT_DISTANCE = 300
+    AI_SPEED = 4
 
     def __init__(self, image, lvl, base_max_hp, base_max_mp, bullet_sound, bullet_image, death_sound, equipment = None):
         pygame.sprite.Sprite.__init__(self)
@@ -124,6 +125,7 @@ class Character (pygame.sprite.Sprite):
         self.update_frames()
         if not self.is_player():
             self.AI_play()
+
         self.move(self.speed_x, 0)
         self.move(0, self.speed_y)
         #print ("Updating Character...")
@@ -138,9 +140,12 @@ class Character (pygame.sprite.Sprite):
         player = self.current_map.game_manager.current_player
         if util.Util.distance(self.rect.x, self.rect.y, player.rect.x, player.rect.y) < self.AI_SIGHT_DISTANCE:
             self.shoot_at(player.rect.x, player.rect.y)
-            #self.set_speed_towards(player)
+            self.set_speed_towards(player)
 
-    #def set_speed_towards
+    def set_speed_towards(self, target):
+        diff_vector = util.Vector.Vector(target.rect.x - self.rect.x, target.rect.y - self.rect.y)
+        diff_vector.normalizar()
+        self.set_speed(diff_vector.x * self.AI_SPEED, diff_vector.y * self.AI_SPEED)
 
     def move(self, x, y):
         if (x != 0 or y != 0):
