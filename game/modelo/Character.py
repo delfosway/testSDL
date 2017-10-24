@@ -46,8 +46,9 @@ class Character (pygame.sprite.Sprite):
         self.speed_y = 0
         #self.sprite = sprite
 
-        self.gold = 0
-
+        self.current_gold  = 0
+        self.total_gold = 0
+        self.kills = 0
         self.base_max_hp = base_max_hp
         self.base_max_mp = base_max_mp
         self.max_hp = 0
@@ -56,7 +57,7 @@ class Character (pygame.sprite.Sprite):
         self.mp = 0
         self.lvl = 0
         self.set_lvl(lvl)
-
+        self.kills = 0
         self.is_dead = False
 
         self.current_map = None
@@ -64,13 +65,24 @@ class Character (pygame.sprite.Sprite):
         self.bullet_image = bullet_image
         self.death_sound = death_sound
 
+
         self.frames_since_last_shot = 0
 
         if equipment == None:
             self.equipment = modelo.Equipment.Equipment(None)
 
-    def add_gold(self, amount):
-        self.gold += amount
+    def heal_to_max(self):
+        self.hp = self.max_hp
+
+    def add_gold(self, gold_amount):
+        self.current_gold += gold_amount
+        self.total_gold += gold_amount
+
+    def subtract_gold(self, gold_amount):
+        self.current_gold -= gold_amount
+
+    def can_afford(self, price):
+        return self.current_gold >= price
 
     def set_lvl(self, lvl):
         self.lvl = lvl
@@ -138,9 +150,13 @@ class Character (pygame.sprite.Sprite):
 
     def AI_play(self):
         player = self.current_map.game_manager.current_player
-        if util.Util.distance(self.rect.x, self.rect.y, player.rect.x, player.rect.y) < self.AI_SIGHT_DISTANCE:
+        if self.is_on_player_sight():
             self.shoot_at(player.rect.x, player.rect.y)
             self.set_speed_towards(player)
+
+    def is_on_player_sight(self):
+        player = self.current_map.game_manager.current_player
+        return util.Util.distance(self.rect.x, self.rect.y, player.rect.x, player.rect.y) < self.AI_SIGHT_DISTANCE
 
     def set_speed_towards(self, target):
         diff_vector = util.Vector.Vector(target.rect.x - self.rect.x, target.rect.y - self.rect.y)
@@ -184,6 +200,7 @@ class Character (pygame.sprite.Sprite):
 
     def killed_character(self, killed_character):
         self.add_gold(killed_character.lvl)
+        self.kills += 1
 
     def base_ac(self):
         return self.lvl * self.BASE_AC_LVL_MULTIPLIER
@@ -242,17 +259,12 @@ class Character (pygame.sprite.Sprite):
     def get_rect(self):
         return self.rect
 
-    def move_ai(self, px, py, ex, ey): #px py = player coordinates, ex ey = enemy coordinates
-        self.px = px
-        self.py = py
-        self.ex = ex
-        self.ey = ey
-
-
     def copy(self):
         new_character = Character(self.image, self.lvl, self.max_hp, self.max_mp, self.bullet_sound, self.bullet_image, self.equipment.copy())
+        new_character.kills = self.kills
         return new_character
 
     def fresh_copy(self):
         new_character = Character(self.image, self.lvl, self.max_hp, self.max_mp, self.bullet_sound, self.bullet_image, self.death_sound, None)
+        new_character.kills = self.kills
         return new_character

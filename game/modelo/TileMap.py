@@ -11,6 +11,7 @@ __status__ = "Prototype"
 import modelo.Tile
 import pygame
 from  random import  randint
+import util.Util
 import negocio.CharacterManager
 
 class TileMap:
@@ -41,6 +42,7 @@ class TileMap:
 
         # Primero actualizamos los Characters:
         for character in self.characters[:]:
+            #print ("Character : " + str(character) + "HP : " + str(character.max_hp))
             if character.is_dead:  # Si esta "Muerto", lo sacamos de la lista.
                 self.characters.remove(character)
             else:
@@ -54,21 +56,8 @@ class TileMap:
             else:
                 bullet.update()
 
-    def spawn_random_enemies(self, amount):
-        enemy_count = amount
-        while enemy_count > 0:
-            tile = self.get_random_walkable_tile()
-            if self.spawn_character_at_tile(self.game_manager.character_manager.get_random_enemy(self.lvl),tile):
-                enemy_count -= 1
-            else:
-                enemy_count = 0
-
-
     def draw(self, camera):
         #Primero dibujamos los tiles.
-
-                #print ("Dibujando Tile : [" + str(x) + "," + str(y) + "]")
-        #camera.draw_drawable(tile)
         camera.draw_map(self)
 
         #Luego dibujamos los Characters
@@ -81,6 +70,28 @@ class TileMap:
             bullet.draw(camera)
             #camera.draw_drawable(bullet)
 
+    def spawn_random_enemies(self, amount):
+        enemy_count = amount
+        while enemy_count > 0:
+            self.spawn_enemy_at_random_tile(self.game_manager.character_manager.get_random_enemy(self.lvl))
+            enemy_count -= 1
+
+    def spawn_enemy_at_random_tile(self, enemy):
+
+        tries = 100
+        found = False
+        while not found and tries > 0:
+            tile = self.get_random_walkable_tile()
+
+            enemy.spawn(self, tile.x, tile.y)
+            if not enemy.is_colliding_with_character() \
+               and not enemy.is_on_player_sight():
+                self.characters.append(enemy)
+                print ("Character added! Position : " + util.Util.position_to_string(tile.rect.x, tile.rect.y))
+                found = True
+
+            tries -= 1
+
     def get_map_graphic_width(self):
         return self.MAP_WIDTH * modelo.Tile.Tile.TILE_WIDTH , self.MAP_HEIGHT * modelo.Tile.Tile.TILE_HEIGHT
 
@@ -90,7 +101,7 @@ class TileMap:
             found_tile = self.tiles[randint(0, self.MAP_WIDTH - 1)][randint(0, self.MAP_HEIGHT - 1)]
             if found_tile is not None:
                 if found_tile.is_walkable():
-                    print ("Walkable Tile Found : [" + str(found_tile.x) + "," + str(found_tile.y) + "]")
+                    #print ("Walkable Tile Found : [" + str(found_tile.x) + "," + str(found_tile.y) + "]")
                     return found_tile
             try_count += 1
         raise NameError("Couldn't find a Walkable Tile!")
@@ -104,22 +115,20 @@ class TileMap:
 
     def spawn_character_at_pos(self, character, x, y):
 
-        max_tries = 100
-        encontrado = False
-        while max_tries > 0 and not encontrado:
-            character.spawn(self, x, y)
-            if not character.is_colliding_with_character():
-                self.characters.append(character)
-                encontrado = True
-            max_tries -= 1
+        character.spawn(self, x, y)
+        if not character.is_colliding_with_character():
+            self.characters.append(character)
+            found = True
+        else:
+            found = False
 
-        return encontrado
+        return found
 
     def spawn_bullet(self, bullet):
         self.bullets.append(bullet)
 
     def load_from_grid(self, grid):
-        self.print_grid(grid)
+        #self.print_grid(grid)
         if self.is_grid_size_valid(grid):
             self.walls = []
             for x in range(self.MAP_WIDTH):
