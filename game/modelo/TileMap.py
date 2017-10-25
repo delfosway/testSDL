@@ -21,6 +21,7 @@ class TileMap:
     HP_POTION_STRING = "Graficos/potion red.png"
     GOLD_STRING = "Graficos/coin.png"
     TRAMP_STRING = "Graficos/potion black.png"
+    NEXT_LVL_STRING = "Graficos/stairs down.png"
     MAP_WIDTH = 64 #Tiles
     MAP_HEIGHT = 64 #Tiles
 
@@ -28,7 +29,7 @@ class TileMap:
     wall_tile = None
     tile_hp_event = None
     tile_gold_event= None
-    tile_next_event = None
+    tile_next_lvl_event = None
     tile_trap_event=None
 
     TILE_FLOOR = 0
@@ -216,6 +217,7 @@ class TileMap:
     def generate_random_tile_events(self, event_amount):
         for x in range(event_amount):
             self.generate_tile_event()
+        self.generate_next_level_event()
 
     def generate_tile_event (self):
         aux_tile = self.get_random_walkable_tile()
@@ -237,10 +239,15 @@ class TileMap:
         self.tile_trap_event = modelo.Tile.TileEvent\
             (pygame.image.load(self.TRAMP_STRING).convert_alpha(), pygame.mixer.Sound("SFX/drink2.wav"), 0, 0, 20,0, False)
 
+    def load_tile_next_lvl_event(self):
+        self.tile_next_lvl_event = modelo.Tile.TileEvent \
+            (pygame.image.load(self.NEXT_LVL_STRING).convert_alpha(), pygame.mixer.Sound("SFX/drink2.wav"), 0, 0, 0,0, True)
+
     def load_default_event_tiles(self):
         self.load_hp_event()
         self.load_tile_gold_event()
         self.load_tile_trap_event()
+        self.load_tile_next_lvl_event()
 
     def set_event(self, event):
             self.event = event
@@ -261,3 +268,10 @@ class TileMap:
             aux_event=self.tile_trap_event.copy()
 
         return aux_event
+
+    def generate_next_level_event(self):
+        aux_tile = self.get_random_walkable_tile()
+        print (aux_tile.x, aux_tile.y)
+        event = self.tile_next_lvl_event.copy()
+        aux_tile.set_event(event)
+        self.events.append(event)
