@@ -229,7 +229,8 @@ class Character (pygame.sprite.Sprite):
             hp_to_substract = 1
         self.subtract_hp(hp_to_substract)
         if self.is_dead:
-            source.killed_character(self)
+            if source is not None:
+                source.killed_character(self)
 
     def heal (self, heal_amount):
         self.add_hp(heal_amount)

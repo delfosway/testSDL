@@ -81,7 +81,7 @@ class TileEvent:
         if self.mp > 0:
             character.add_mp(self.mp)
         if self.dmg_to_deal > 0:
-            character.receive_damage(self.dmg_to_deal)
+            character.receive_damage(self.dmg_to_deal, None)
         if self.gold > 0:
             character.add_gold(self.gold)
         if self.next_lvl:

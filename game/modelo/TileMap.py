@@ -29,7 +29,7 @@ class TileMap:
     tile_hp_event = None
     tile_gold_event= None
     tile_next_event = None
-    tile_tramp_event=None
+    tile_trap_event=None
 
     TILE_FLOOR = 0
     TILE_WALL = 1
@@ -230,15 +230,17 @@ class TileMap:
             (pygame.image.load(self.HP_POTION_STRING).convert_alpha(), pygame.mixer.Sound("SFX/drink2.wav"), 50, 0, 0, 0, False)
 
     def load_tile_gold_event(self):
-        self.tile_gold_event = modelo.Tile.TileEvent(pygame.image.load(self.GOLD_STRING).convert_alpha(), 0, 0,0, 50, False)
+        self.tile_gold_event = modelo.Tile.TileEvent\
+            (pygame.image.load(self.GOLD_STRING).convert_alpha(), pygame.mixer.Sound("SFX/coin2.wav"), 0, 0, 0, 5, False)
 
-    def load_tile_tramp_event(self):
-        self.tile_tramp_event = modelo.Tile.TileEvent(pygame.image.load(self.TRAMP_STRING).convert_alpha(), 0, 0, 20,0, False)
+    def load_tile_trap_event(self):
+        self.tile_trap_event = modelo.Tile.TileEvent\
+            (pygame.image.load(self.TRAMP_STRING).convert_alpha(), pygame.mixer.Sound("SFX/drink2.wav"), 0, 0, 20,0, False)
 
     def load_default_event_tiles(self):
         self.load_hp_event()
         self.load_tile_gold_event()
-        self.load_tile_tramp_event()
+        self.load_tile_trap_event()
 
     def set_event(self, event):
             self.event = event
@@ -256,6 +258,6 @@ class TileMap:
             aux_event=self.tile_gold_event.copy()
 
         if aux_rand==2:
-            aux_event=self.tile_tramp_event.copy()
+            aux_event=self.tile_trap_event.copy()
 
         return aux_event
