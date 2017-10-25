@@ -32,6 +32,7 @@ class Camera:
         self.player_pos_y=0
 
         self.pixelart_font = pygame.font.Font('pixelart.ttf', 30)
+        self.pixelart_big_font = pygame.font.Font('pixelart.ttf', 60)
         self.arial_font = pygame.font.Font('arial.ttf', 30)
 
     def attach_to_drawable(self, drawable):
@@ -78,6 +79,13 @@ class Camera:
 
     def draw_text(self, text, x, y, color = util.Graphics.WHITE, size = 30):
         menu_text2 = self.pixelart_font
+        text_surface2, text_rect2 = self.prepare_text(text, menu_text2, color)
+        text_rect2 = x, y
+        #print ("Text to Draw : " + text)
+        self.screen.blit(text_surface2, text_rect2)
+
+    def draw_big_text(self, text, x, y, color = util.Graphics.WHITE):
+        menu_text2 = self.pixelart_big_font
         text_surface2, text_rect2 = self.prepare_text(text, menu_text2, color)
         text_rect2 = x, y
         #print ("Text to Draw : " + text)
