@@ -224,7 +224,7 @@ class TileMap:
 
 
     def load_hp_event (self):
-        self.tile_hp_event = modelo.Tile.TileEvent (None, pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0,0,False)
+        self.tile_hp_event = modelo.Tile.TileEvent (pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0, 0, 0, False)
 
     def load_default_event_tiles(self):
         self.load_hp_event()

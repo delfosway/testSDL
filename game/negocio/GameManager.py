@@ -98,9 +98,9 @@ class GameManager:
                 self.update_and_draw()
                 self.wait_seconds(1)
                 running = False
-            if player.kills >= 5:
-                self.start_next_lvl()
-                player.kills = 0
+            #if player.kills >= 5:
+            #    self.start_next_lvl()
+            #    player.kills = 0
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -159,8 +159,8 @@ class GameManager:
         # DRAW
         self.camera.fill_background()
         self.current_map.draw(self.camera)
-        self.camera.draw_text("Gold  : " + str(self.current_player.current_gold), 0, 0)
-        self.camera.draw_text("Score : " + str(self.current_player.current_gold), 0, 30)
+        #self.camera.draw_text("Gold  : " + str(self.current_player.current_gold), 0, 0)
+        self.camera.draw_text("Score : " + str(self.current_player.current_gold), 0, 0)
         pygame.display.flip()
 
     def end_game(self):

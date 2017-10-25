@@ -18,8 +18,12 @@ class Vector:
 
     def normalizar(self):
         mag = self.magnitud()
-        self.x = self.x / mag
-        self.y = self.y / mag
+        if mag != 0:
+            self.x = self.x / mag
+            self.y = self.y / mag
+        else:
+            self.x = 0
+            self.y = 0
 
     def magnitud(self):
         return math.sqrt(math.pow(self.x, 2) + math.pow(self.y, 2))

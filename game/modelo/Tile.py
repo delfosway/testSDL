@@ -48,7 +48,7 @@ class Tile (pygame.sprite.Sprite):
             if self.event.is_dead:
                 self.event = None
 
-    def set_event(self,event):
+    def set_event(self, event):
         self.event = event
         event.set_tile(self)
 
@@ -64,8 +64,8 @@ class Tile (pygame.sprite.Sprite):
 
 class TileEvent:
 
-    def __init__(self, tile, sprite , hp = 0, mp = 0, dmg_to_deal = 0, gold = 0, next_lvl = False):
-        self.tile = tile
+    def __init__(self, sprite, hp = 0, mp = 0, dmg_to_deal = 0, gold = 0, next_lvl = False):
+        self.tile = None #A ser asignado en set_tile
         self.sprite = sprite
         self.hp = hp
         self.mp = mp
@@ -81,10 +81,10 @@ class TileEvent:
             character.add_mp(self.mp)
         if self.dmg_to_deal > 0:
             character.receive_damage(self.dmg_to_deal)
-        if self.next_lvl:
-            character.current_map.game_manager.go_to_next_lvl()
         if self.gold > 0:
             character.add_gold(self.gold)
+        if self.next_lvl:
+            character.current_map.game_manager.start_next_lvl()
         self.destroy()
 
     def set_tile(self, tile):
@@ -104,6 +104,7 @@ class TileEvent:
         self.tile.update()
 
     def copy(self):
-        new_event = TileEvent(self.tile, self.sprite, self.hp, self.mp, self.dmg_to_deal, self.next_lvl)
+        new_event = TileEvent(self.sprite, self.hp, self.mp, self.dmg_to_deal, self.gold, self.next_lvl)
+        new_event.set_tile(self.tile)
         return new_event
 

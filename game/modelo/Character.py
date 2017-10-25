@@ -175,9 +175,10 @@ class Character (pygame.sprite.Sprite):
             elif self.is_colliding_with_character():
                 self.rect.x = old_x
                 self.rect.y = old_y
-            colliding_event = self.is_colliding_with_event()
-            if colliding_event:
-                colliding_event.apply(self)
+            if self.is_player():  ##Solo el player colisiona con eventos.
+                colliding_event = self.is_colliding_with_event()
+                if colliding_event:
+                    colliding_event.apply(self)
 
     def is_colliding_with_wall(self):
         walls = self.current_map.walls
