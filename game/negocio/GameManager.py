@@ -57,8 +57,12 @@ class GameManager:
         self.end_game()
 
     def start_lvl(self, lvl):
-        #Asignamos el nivel actual.
+        # Asignamos el nivel actual.
         self.current_lvl = lvl
+
+        if lvl > 1:
+            self.show_loading_next_lvl_msg()
+
         #Creamos un nuevo Tilemap.
         self.current_map = modelo.TileMap.TileMap(lvl, self)
 
@@ -72,6 +76,10 @@ class GameManager:
         #Spawneamos los enemigos
         self.current_map.spawn_random_enemies(100)
         self.current_map.generate_random_tile_events(50)
+
+    def show_loading_next_lvl_msg(self):
+        self.camera.draw_big_text("Loading level " + str(self.current_lvl) + "...", 160, 250, util.Graphics.WHITE)
+        pygame.display.flip()
 
     def start_next_lvl(self):
         self.start_lvl(self.current_lvl + 1)

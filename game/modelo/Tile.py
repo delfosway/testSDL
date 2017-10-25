@@ -64,8 +64,9 @@ class Tile (pygame.sprite.Sprite):
 
 class TileEvent:
 
-    def __init__(self, sprite, hp = 0, mp = 0, dmg_to_deal = 0, gold = 0, next_lvl = False):
+    def __init__(self, sprite, sound, hp = 0, mp = 0, dmg_to_deal = 0, gold = 0, next_lvl = False):
         self.tile = None #A ser asignado en set_tile
+        self.sound = sound
         self.sprite = sprite
         self.hp = hp
         self.mp = mp
@@ -85,7 +86,17 @@ class TileEvent:
             character.add_gold(self.gold)
         if self.next_lvl:
             character.current_map.game_manager.start_next_lvl()
+        self.play_sound()
         self.destroy()
+
+    def play_sound(self):
+        if self.sound is not None:
+            channel = pygame.mixer.find_channel(1)
+            if not channel.get_busy():
+                channel.queue(self.sound)
+            else:
+                channel2 = pygame.mixer.find_channel(2)
+                channel2.queue(self.sound)
 
     def set_tile(self, tile):
         self.tile = tile
@@ -104,7 +115,7 @@ class TileEvent:
         self.tile.update()
 
     def copy(self):
-        new_event = TileEvent(self.sprite, self.hp, self.mp, self.dmg_to_deal, self.gold, self.next_lvl)
+        new_event = TileEvent(self.sprite, self.sound, self.hp, self.mp, self.dmg_to_deal, self.gold, self.next_lvl)
         new_event.set_tile(self.tile)
         return new_event
 
