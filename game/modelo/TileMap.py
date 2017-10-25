@@ -19,6 +19,8 @@ class TileMap:
     FLOOR_TILE_SPRITE_STRING = "Graficos/wood.png"
     WALL_TILE_SPRITE_STRING = "Graficos/wall.png"
     HP_POTION_STRING = "Graficos/potion red.png"
+    GOLD_STRING = "Graficos/coin.png"
+    TRAMP_STRING = "Graficos/potion black.png"
     MAP_WIDTH = 64 #Tiles
     MAP_HEIGHT = 64 #Tiles
 
@@ -217,7 +219,7 @@ class TileMap:
 
     def generate_tile_event (self):
         aux_tile = self.get_random_walkable_tile()
-        event = self.tile_hp_event.copy()
+        event = self.generate_random_event()
         aux_tile.set_event(event)
         self.events.append(event)
 
@@ -226,9 +228,33 @@ class TileMap:
     def load_hp_event (self):
         self.tile_hp_event = modelo.Tile.TileEvent (pygame.image.load(self.HP_POTION_STRING).convert_alpha(), 50, 0, 0, 0, False)
 
+    def load_tile_gold_event(self):
+        self.tile_gold_event = modelo.Tile.TileEvent(pygame.image.load(self.GOLD_STRING).convert_alpha(), 0, 0,0, 50, False)
+
+    def load_tile_tramp_event(self):
+        self.tile_tramp_event = modelo.Tile.TileEvent(pygame.image.load(self.TRAMP_STRING).convert_alpha(), 0, 0, 20,0, False)
+
     def load_default_event_tiles(self):
         self.load_hp_event()
+        self.load_tile_gold_event()
+        self.load_tile_tramp_event()
 
     def set_event(self, event):
             self.event = event
             event.tile = self
+
+    def generate_random_event (self):
+
+        aux_rand = randint(0,2)
+        aux_event=None
+
+        if aux_rand==0:
+            aux_event=self.tile_hp_event.copy()
+
+        if aux_rand == 1:
+            aux_event=self.tile_gold_event.copy()
+
+        if aux_rand==2:
+            aux_event=self.tile_tramp_event.copy()
+
+        return aux_event
