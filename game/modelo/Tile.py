@@ -90,12 +90,13 @@ class TileEvent:
         self.destroy()
 
     def play_sound(self):
-        channel = pygame.mixer.find_channel(1)
-        if not channel.get_busy():
-            channel.queue(self.sound)
-        else:
-            channel2 = pygame.mixer.find_channel(2)
-            channel2.queue(self.sound)
+        if self.sound is not None:
+            channel = pygame.mixer.find_channel(1)
+            if not channel.get_busy():
+                channel.queue(self.sound)
+            else:
+                channel2 = pygame.mixer.find_channel(2)
+                channel2.queue(self.sound)
 
     def set_tile(self, tile):
         self.tile = tile
