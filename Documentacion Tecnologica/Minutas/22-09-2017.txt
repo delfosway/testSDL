@@ -1,0 +1,2 @@
+Temas Charlados:
+#Diseño del juego : Realizamos un diseño preliminar a traves de un diagrama de clases para ir viendo como podriamos estructurarlo. Llegamos a una conclusion y a partir de ella comenzamos el desarrollo.

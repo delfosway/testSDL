@@ -1,0 +1,4 @@
+Temas charlados : 
+#Tipo de juego a realizar.
+#Charlas varias e investigacion acerca de Python para familiarizarnos con el lenguaje y sus convenciones.
+#Primera etapa de definicion de Requisitos.

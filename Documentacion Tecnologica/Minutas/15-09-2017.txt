@@ -1,0 +1,4 @@
+Temas Charlados :
+#Eleccion de IDE : pyCharm nos parecio la mas conveniente y practica, por lo que asentamos el uso de la misma para el proyecto.
+#Terminamos de definir el juego en si y ahondamos en la estructura del mismo, asi tambien como podriamos implementarlo.
+#Dividimos las tareas para cada uno (El detalle de la division puede verse en la planilla de Tareas Administrativas).

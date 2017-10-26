@@ -1,0 +1,4 @@
+Temas charlados:
+#Comentamos avances individuales y revisamos las dudas que teniamos.
+#Empezamos a preparar el terreno para el merge inicial. Estimamos para la semana que viene, o a mas tardar la otra para el merge inicial y empezar a trabajar en conjunto. Para el momento del Merge, vamos a redistribuir las tareas para adaptarnos al nuevo proyecto.
+#Comparamos algoritmos de generacion procedural de mapas para elegir el que mas nos guste para nuestro juego. Esta en evaluacion el metodo de Hauberk (http://journal.stuffwithstuff.com/2014/12/21/rooms-and-mazes/) o el metodo BSP (https://eskerda.com/bsp-dungeon-generation/)
