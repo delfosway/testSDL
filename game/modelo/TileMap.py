@@ -133,7 +133,6 @@ class TileMap:
         return self.spawn_character_at_pos(character, tile.x, tile.y)
 
     def spawn_character_at_pos(self, character, x, y):
-
         character.spawn(self, x, y)
         if not character.is_colliding_with_character():
             self.characters.append(character)

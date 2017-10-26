@@ -32,28 +32,42 @@ class GameManager:
         self.current_lvl = 0
         self.current_map = None
         self.clock = pygame.time.Clock()
+        self.exit_queued = False
 
     def set_current_player(self,character):
         self.current_player = character
 
     def start(self):
-
-        #Creamos la Camara
+        # Creamos la Camara
         self.camera = negocio.Camera.Camera(800, 600)
+
         #Creamos al Player (Heroe) y lo asignamos como Player Actual
+        #Attachamos la camara al Player.
+
+        #Mostramos Tutorial
+        self.tutorial()
+        #Mostramos Menu Principal
+        self.main_menu()
+        while not self.exit_queued:
+            self.start_new_game()
+            #Volvemos al menu principal, donde puede volver a jugar
+            #O salir del juego.
+            self.main_menu()
+
+    def create_new_player(self):
         player = self.character_manager.get_player()
         self.set_current_player(player)
-        #Attachamos la camara al Player.
         self.camera.attach_to_drawable(player)
-        #Mostramos Tutorial
-        tuto = True
-        self.tutorial(tuto)
-        #Mostramos Menu Principal
-        menu = True
-        self.main_menu(menu)
-        #Iniciamos el juego con el primer nivel.
+        return player
+
+    def start_new_game(self):
+        # Creamos un nuevo Personaje para el Jugador.
+        self.create_new_player()
+        # Iniciamos el juego con el primer nivel.
         self.start_lvl(1)
+        # Ingresamos al Main Loop
         self.main_loop()
+        # Mostramos el mensaje de finalizacion.
         self.end_game()
 
     def start_lvl(self, lvl):
@@ -188,24 +202,30 @@ class GameManager:
             self.camera.fill_menu()
             self.camera.draw_text("You have died horribly...", 200, 150, util.Graphics.BLACK)
             self.camera.draw_text("Your final score is : " + str(self.current_player.total_gold), 200, 250, util.Graphics.BLACK)
-            self.camera.draw_text("Press enter to quit the game", 170, 350, util.Graphics.BLACK)
+            self.camera.draw_text("Press enter to return to the main menu", 120, 350, util.Graphics.BLACK)
             pygame.display.update()
 
-    def main_menu(self, state):
+    def main_menu(self):
+        state = True
+        self.camera.fill_menu()
+        self.camera.draw_text("Welcome to the main menu", 200, 150, util.Graphics.BLACK)
+        self.camera.draw_text("Press Enter or Space to start the game", 140, 250, util.Graphics.BLACK)
+        self.camera.draw_text("Press Escape or X to quit the game", 150, 350, util.Graphics.BLACK)
+        pygame.display.update()
         while state:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                         state = False
 
-            self.camera.fill_menu()
-            self.camera.draw_text("Welcome to the main menu", 200, 150, util.Graphics.BLACK)
-            self.camera.draw_text("Press enter to start the game", 170, 350, util.Graphics.BLACK)
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_x:
+                        state = False
+                        self.exit_queued = True
 
-            pygame.display.update()
+
 
     def shop_menu(self, state):
         while state:
@@ -223,7 +243,9 @@ class GameManager:
             # text_surface, text_rect = text_draw("Welcome to the main menu", menu_text)
             # text_rect = 80, 100
             # camera.screen.blit(text_surface, text_rect)
-            self.camera.draw_text("Press enter to start the game", 160, 350, util.Graphics.BLACK)
+            self.camera.draw_text("Press enter to start the game", 160, 275, util.Graphics.BLACK)
+            self.camera.draw_text("Press Escape of X to quit the game", 155, 350, util.Graphics.BLACK)
+
 
             # menu_text2 = pygame.font.Font('arial.ttf', 35)
             # text_surface2, text_rect2 = text_draw("Press enter to start the game", menu_text2)
@@ -231,7 +253,8 @@ class GameManager:
             # camera.screen.blit(text_surface2, text_rect2)
             pygame.display.update()
 
-    def tutorial(self, state):
+    def tutorial(self):
+        state = True
         while state:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
