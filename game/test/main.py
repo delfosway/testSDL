@@ -35,9 +35,5 @@ def main():
     game_init()
     game_manager.start()
 
-
-
-
-
 if __name__ == '__main__':
     main()

@@ -2,3 +2,7 @@ Aqui deberian estar las capturas del software con el que implementamos Kanban y 
 El Kanban lo implementamos con Trello, y las minutas las implementamos dentro de Trello a su vez, asi que simplemente les dejo el link para que lo puedan ver Online (Este tambien figura en el readme del repositorio) :
 
 https://trello.com/delfoswaysoftware
+
+Link de Github : 
+
+https://github.com/delfosway/testSDL
